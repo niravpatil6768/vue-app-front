@@ -1,21 +1,22 @@
 
-import CreatePage from '@/views/CreatePage.vue'
 import EditPage from '@/views/EditPage.vue'
-import HomePage from '@/views/HomePage.vue'
 import ViewPage from '@/views/ViewPage.vue'
+import LoginPage from '@/views/LoginPage.vue'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import DashboardPage from '@/views/DashboardPage.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'homePage',
-    component: HomePage
+    name: 'LoginPage',
+    component: LoginPage
   },
   {
-    path: '/create',
-    name: 'CreatePage',
-    component: CreatePage
+    path: '/dashboard',
+    name: 'DashboardPage',
+    component: DashboardPage,
+    meta: { requiresAuth: true}
   },
   {
     path: '/view/:id',
@@ -34,4 +35,14 @@ const router = createRouter({
   routes
 })
 
-export default router
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+
+  if(to.meta.requiresAuth && !token){
+    next({name: 'LoginPage'})
+  } else {
+    next();
+  }
+})
+
+export default router;
