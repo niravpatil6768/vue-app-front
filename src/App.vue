@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-    <!-- <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/create">Create</router-link>
-    </nav> -->
-    <!-- The router-view will render the matched component based on the current route -->
     <router-view />
   </div>
 </template>

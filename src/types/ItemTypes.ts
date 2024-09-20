@@ -16,3 +16,9 @@ export interface ProductData {
   seller: string,
   description: string
 }
+
+export interface ProductForm {
+  name: string,
+  price: string,
+  description: string
+}

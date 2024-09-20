@@ -4,6 +4,7 @@ import ViewPage from '@/views/ViewPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import DashboardPage from '@/views/DashboardPage.vue'
+import CreatePage from '@/views/CreatePage.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -27,6 +28,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/edit/:id',
     name: 'EditPage',
     component: EditPage
+  },
+  {
+    path: '/create',
+    name: 'CreatePage',
+    component: CreatePage,
+    meta: { requiresAuth: true}
   }
 ]
 

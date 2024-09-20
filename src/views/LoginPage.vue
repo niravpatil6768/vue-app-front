@@ -28,8 +28,10 @@ import { LoginService } from '@/service';
 import { LoginForm } from '@/types/ItemTypes';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserId } from '@/stores/Store';
 
 const router = useRouter();
+const userIdStore = useUserId(); 
 
       const formData = ref<LoginForm>({
           email: '',
@@ -53,6 +55,10 @@ const router = useRouter();
             if(data.token){
             router.push("/dashboard");
             localStorage.setItem('token', data.token);
+            const token = data.token;
+            const userId = JSON.parse(atob(token.split('.')[1]))._id
+            userIdStore.setUserId(userId)
+            console.log(JSON.parse(atob(token.split('.')[1])).type)
         }
            console.log(data);
         } catch(error){

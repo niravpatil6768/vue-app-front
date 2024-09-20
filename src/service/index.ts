@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginForm } from '@/types/ItemTypes';
+import { LoginForm, ProductForm } from '@/types/ItemTypes';
 
 const BASE_API = "http://localhost:3000"
 
@@ -25,5 +25,32 @@ export const productService = async () => {
        return res.data.products;
     }catch(error){
         throw new Error('Error in fetching products');
+    }
+}
+
+export const userProductService = async (userId: unknown) => {
+    try {
+       const res = await axios.get(`${BASE_API}/product/getProducts/${userId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+       });
+       return res.data.products;
+    }catch(error){
+        throw new Error('Error in fetching products');
+    }
+}
+
+export const addProductService = async (formData : ProductForm, userId : unknown) => {
+    try{
+      const res = await axios.post(`${BASE_API}/product/createProduct/${userId}`, formData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+       })
+      return res;
+    }
+    catch(error){
+        throw new Error('Error in add product');
     }
 }
