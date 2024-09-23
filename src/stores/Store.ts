@@ -1,5 +1,4 @@
 import {defineStore} from 'pinia';
-import {ref, computed} from 'vue';
 
 export const useUserId = defineStore('userId', {
     state: () => ({
@@ -15,3 +14,20 @@ export const useUserId = defineStore('userId', {
 
 })
 
+export const useProductData = defineStore('product',{
+    
+    state: () => {
+        const productForm = localStorage.getItem('product') ?? '';
+        console.log('Initial productForm:', productForm); // Log the state on load
+        return {
+            productForm
+        };
+    },
+
+    actions : {
+        setProductForm(value: string){
+            this.productForm = value;
+            localStorage.setItem('product', value);
+        }
+    }
+})

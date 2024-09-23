@@ -9,7 +9,14 @@ export interface LoginForm {
   password: string
 }
 
+export interface SignupForm {
+  email: string,
+  password: string,
+  type: string
+}
+
 export interface ProductData {
+  length: boolean
   _id: string,
   name: string,
   price: string,

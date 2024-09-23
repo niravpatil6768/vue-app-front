@@ -36,7 +36,21 @@
                   <v-card-subtitle>
                       {{ product.price }}
                   </v-card-subtitle>
+                  <v-card-actions class="card-action">
+        <v-btn
+          class="btn"
+          @click="fetchProduct(product._id)"
+        >
+          Update Product
+        </v-btn>
+        <v-btn
+          class="btn1"
+        >
+          Delete Product
+        </v-btn>
+      </v-card-actions>
                 </v-card>
+
               </v-responsive>
             </v-row>
           </v-col>
@@ -47,17 +61,21 @@
 </template>
 
 <script setup lang="ts">
-import { productService, userProductService } from "@/service";
+import { getSingleProductService, productService, userProductService } from "@/service";
 import { ProductData } from "@/types/ItemTypes";
 import { ref, onMounted } from "vue";
 import NavBar from "./NavBar.vue";
-import { useUserId } from "@/stores/Store";
+import { useUserId, useProductData } from "@/stores/Store";
+import { useRouter } from "vue-router";
 
 const Products = ref<ProductData[]>([]);
   const storeId = useUserId();
   const userId = storeId.userId;
+  const router = useRouter();
   const token : string | null = localStorage.getItem('token');
   const userType = ref(token ? JSON.parse(atob(token.split('.')[1])).type : null);
+  const singleProduct = useProductData();
+
 
 const fetchProducts = async () => {
   try {
@@ -76,13 +94,25 @@ const fetchProducts = async () => {
 };
 
 onMounted(fetchProducts);
+
+const fetchProduct = async (id: string) => {
+  try  {
+    const res = await getSingleProductService(id);
+    console.log(res);
+    singleProduct.setProductForm(res);
+    router.push('/create') 
+  }
+  catch (error) {
+    console.error("Error fetching single product:", error);
+  }
+}
 </script>
 
 <style>
 .card{
   background-color: antiquewhite !important;
-  width: 250px;
-  height: 350px;
+  width: 270px;
+  /* height: 350px; */
   margin: 20px;
 
 }
@@ -93,5 +123,17 @@ onMounted(fetchProducts);
 }
 .containPro{
   margin-top: 50px;
+}
+.btn{
+  background-color: orange !important;
+  color: white !important;
+}
+.btn1{
+  background-color: red !important;
+  color: white !important;
+}
+.card-action{
+  display: flex;
+  flex-direction: column;
 }
 </style>

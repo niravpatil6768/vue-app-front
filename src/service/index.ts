@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginForm, ProductForm } from '@/types/ItemTypes';
+import { LoginForm, ProductForm, SignupForm } from '@/types/ItemTypes';
 
 const BASE_API = "http://localhost:3000"
 
@@ -13,6 +13,16 @@ export const LoginService = async (formData : LoginForm) => {
         throw new Error('Login failed. Please check your credentials.');
     }
 
+}
+
+export const signupService = async (FormData : SignupForm) => {
+    try{
+        const res = await axios.post(`${BASE_API}/user/signup`, FormData)
+        return res.data;
+    }
+    catch(error){
+        throw new Error('Signup is failed. Please try again to register.');
+    }
 }
 
 export const productService = async () => {
@@ -52,5 +62,34 @@ export const addProductService = async (formData : ProductForm, userId : unknown
     }
     catch(error){
         throw new Error('Error in add product');
+    }
+}
+
+export const getSingleProductService = async (Id: string) => {
+    try {
+        const res = await axios.get(`${BASE_API}/product/getProduct/${Id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return res.data.product;
+    }
+    catch(error){
+        throw new Error('Error in get single product');
+    }
+}
+
+export const updateProductService = async (formData : ProductForm, Id : string) => {
+    try {
+        const res = await axios.put(`${BASE_API}/product/editProduct/${Id}`, formData,{
+            headers: {
+                Authorization: `Bearer ${token}`
+
+            }
+        })
+        return res;
+    }
+    catch(error){
+        throw new Error('Error in update product');
     }
 }

@@ -9,8 +9,15 @@
             <h5 class="text">{{ errorMessage }}</h5>
           </div>
           <v-select
+          v-model="type"
+          v-bind="typeAttrs"
+          class="text-field"
   label="Select User Type"
   :items="['SELLER', 'BUYER']"
+  autocomplete="off"
+            required
+            clearable
+            :error-messages="errors.type"
 ></v-select>
             <v-text-field
             v-model="email"
@@ -48,48 +55,43 @@
     
     
     <script setup lang="ts">
-    import { LoginService } from '@/service';
-    import { LoginForm } from '@/types/ItemTypes';
-    import * as yup from "yup";
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { useForm } from 'vee-validate';
-    import { useUserId } from '@/stores/Store';
+import { signupSchema } from '@/schemas/signupSchema';
+import { signupService } from '@/service';
+import { SignupForm } from '@/types/ItemTypes';
+
     
     const router = useRouter();
-    const userIdStore = useUserId(); 
     
     
         const errorMessage = ref<string>('');
-        const { errors, handleSubmit, defineField } = useForm({
-      validationSchema: yup.object({
-        email: yup.string().email().required(),
-        password: yup.string().min(6).required(),
-      }),
+        const { errors, handleSubmit, defineField } = useForm<SignupForm>({
+      validationSchema: signupSchema
     });
     
     const onSubmit = handleSubmit( async (values) => {
       try {
         errorMessage.value = '';
-        const data = await LoginService(values as LoginForm);
-        if (data.token) {
-          router.push("/dashboard");
-          localStorage.setItem('token', data.token);
-          const token = data.token;
-                const userId = JSON.parse(atob(token.split('.')[1]))._id
-                userIdStore.setUserId(userId)
-                console.log(JSON.parse(atob(token.split('.')[1])).type)
-            }
+        const data = await signupService(values as SignupForm);
+        // this.$toast.success("Signup successful!");
+        router.push('/');
                console.log(data);
             } catch(error){
-                errorMessage.value = 'Login failed. Please check your email and password.';
+                errorMessage.value = 'Signup is failed. Please try again to register.';
             }
     })
     
     const [email, emailAttrs] = defineField('email');
     const [password, passwordAttrs] = defineField('password');
+    const [type, typeAttrs] = defineField('type');
     
-    </script>
+    
+function useToast(): { toast: any; } {
+  throw new Error('Function not implemented.');
+}
+</script>
     
     <style scoped>
     .v-container {
