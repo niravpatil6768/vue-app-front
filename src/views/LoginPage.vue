@@ -72,6 +72,7 @@ const onSubmit = handleSubmit( async (values) => {
       const token = data.token;
             const userId = JSON.parse(atob(token.split('.')[1]))._id
             userIdStore.setUserId(userId)
+            localStorage.setItem('userId', userId);
             console.log(JSON.parse(atob(token.split('.')[1])).type)
         }
            console.log(data);

@@ -29,3 +29,7 @@ export interface ProductForm {
   price: string,
   description: string
 }
+
+export interface ProductState {
+    productData: ProductData[]; // Define the type for productData
+}

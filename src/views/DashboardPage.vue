@@ -43,11 +43,7 @@
         >
           Update Product
         </v-btn>
-        <v-btn
-          class="btn1"
-        >
-          Delete Product
-        </v-btn>
+       <DeleteButton @delete="deleteProduct(product._id)"/>
       </v-card-actions>
                 </v-card>
 
@@ -61,12 +57,14 @@
 </template>
 
 <script setup lang="ts">
-import { getSingleProductService, productService, userProductService } from "@/service";
+import { deleteProductService, getSingleProductService, productService, userProductService } from "@/service";
 import { ProductData } from "@/types/ItemTypes";
 import { ref, onMounted } from "vue";
+import DeleteButton from '@/components/DeleteButton.vue';
 import NavBar from "./NavBar.vue";
-import { useUserId, useProductData } from "@/stores/Store";
+import { useUserId, useProductData, useProductList} from "@/stores/Store";
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const Products = ref<ProductData[]>([]);
   const storeId = useUserId();
@@ -75,12 +73,14 @@ const Products = ref<ProductData[]>([]);
   const token : string | null = localStorage.getItem('token');
   const userType = ref(token ? JSON.parse(atob(token.split('.')[1])).type : null);
   const singleProduct = useProductData();
+  const productStore = useProductList();
+  const toast = useToast();
 
 
 const fetchProducts = async () => {
   try {
     
-    if(userType.value === "SUPERADMIN"){
+    if(userType.value === "SUPERADMIN" || userType.value === "BUYER"){
       const data = await productService();
       Products.value = data
     } else if(userType.value === "SELLER" ){
@@ -93,7 +93,13 @@ const fetchProducts = async () => {
   }
 };
 
-onMounted(fetchProducts);
+onMounted(async () => {
+    await productStore.fetchProduct();
+    if(productStore.productData){
+      Products.value = productStore.productData;
+    }
+    // fetchProducts();
+});
 
 const fetchProduct = async (id: string) => {
   try  {
@@ -106,6 +112,20 @@ const fetchProduct = async (id: string) => {
     console.error("Error fetching single product:", error);
   }
 }
+
+const deleteProduct = async (id: string) => {
+ try {
+  const res = await deleteProductService(id);
+  console.log(res);
+  if(res.status === 200){
+    toast.success("Product deleted successfully!", {
+    timeout: 3000, // Duration
+  });
+  }
+ } catch (error) {
+    console.error("Error in delete product:", error);
+  }
+};
 </script>
 
 <style>

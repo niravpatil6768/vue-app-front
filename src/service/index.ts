@@ -93,3 +93,18 @@ export const updateProductService = async (formData : ProductForm, Id : string) 
         throw new Error('Error in update product');
     }
 }
+
+export const deleteProductService = async (id: string) => {
+    try {
+        const res = await axios.delete(`${BASE_API}/product/deleteProduct/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+
+            }
+        })
+        return res;
+    }
+    catch(error){
+        throw new Error('Error in Delete product');
+    }
+}

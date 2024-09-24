@@ -59,11 +59,13 @@
     import { useRouter } from 'vue-router';
     import { useForm } from 'vee-validate';
 import { signupSchema } from '@/schemas/signupSchema';
+import {useToast} from 'vue-toastification';
 import { signupService } from '@/service';
 import { SignupForm } from '@/types/ItemTypes';
 
     
     const router = useRouter();
+    const toast = useToast();
     
     
         const errorMessage = ref<string>('');
@@ -75,7 +77,9 @@ import { SignupForm } from '@/types/ItemTypes';
       try {
         errorMessage.value = '';
         const data = await signupService(values as SignupForm);
-        // this.$toast.success("Signup successful!");
+        toast.success("You are Signup successfully!", {
+    timeout: 3000, // Duration
+  });
         router.push('/');
                console.log(data);
             } catch(error){
@@ -88,9 +92,6 @@ import { SignupForm } from '@/types/ItemTypes';
     const [type, typeAttrs] = defineField('type');
     
     
-function useToast(): { toast: any; } {
-  throw new Error('Function not implemented.');
-}
 </script>
     
     <style scoped>
