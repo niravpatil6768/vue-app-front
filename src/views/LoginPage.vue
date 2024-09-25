@@ -44,17 +44,22 @@
 
 
 <script setup lang="ts">
-import { LoginService } from '@/service';
+import { createService } from '@/service';
 import { LoginForm } from '@/types/ItemTypes';
 import * as yup from "yup";
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
-import { useUserId } from '@/stores/Store';
+import { pinia } from '@/main';
+import { useAuthStore } from '@/stores/Store';
 import { loginSchema } from '@/schemas/loginSchema';
 
 const router = useRouter();
-const userIdStore = useUserId(); 
+const authStore = useAuthStore();
+
+
+const {LoginService} = createService(pinia);
+
 
 
     const errorMessage = ref<string>('');
@@ -67,15 +72,10 @@ const onSubmit = handleSubmit( async (values) => {
     errorMessage.value = '';
     const data = await LoginService(values as LoginForm);
     if (data.token) {
+     authStore.login(data.token);
       router.push("/dashboard");
-      localStorage.setItem('token', data.token);
-      const token = data.token;
-            const userId = JSON.parse(atob(token.split('.')[1]))._id
-            userIdStore.setUserId(userId)
-            localStorage.setItem('userId', userId);
-            console.log(JSON.parse(atob(token.split('.')[1])).type)
         }
-           console.log(data);
+          
         } catch(error){
             errorMessage.value = 'Login failed. Please check your email and password.';
         }

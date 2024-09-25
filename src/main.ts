@@ -31,4 +31,5 @@ const vuetify = createVuetify({
 });
 
 const pinia = createPinia();
-createApp(App).use(vuetify).use(pinia).use(Toast, options).use(router).mount('#app')
+createApp(App).use(vuetify).use(pinia).use(Toast, options).use(router).mount('#app');
+export { pinia };

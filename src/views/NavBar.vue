@@ -37,11 +37,15 @@
 <script setup lang="ts">
    import {ref} from 'vue';
    import {useRouter} from 'vue-router';
+   import { useAuthStore } from '@/stores/Store';
+
+   const AuthStore = useAuthStore();
 
    const router = useRouter();
    const drawer = ref(false);
 
    const logout = () => {
+         AuthStore.logout();
          localStorage.clear();
          router.push('/')
    }

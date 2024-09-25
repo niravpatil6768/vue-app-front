@@ -1,23 +1,75 @@
-import { productService, userProductService } from '@/service';
-import { ProductData, ProductState } from '@/types/ItemTypes';
+import { createService } from '@/service';
+import { ProductData } from '@/types/ItemTypes';
 import {defineStore} from 'pinia';
+import { pinia } from '@/main'; 
 import { ref } from 'vue';
 
-const token : string | null = localStorage.getItem('token');
-const userType = ref(token ? JSON.parse(atob(token.split('.')[1])).type : null);
-export const useUserId = defineStore('userId', {
-    state: () => ({
-        userId: localStorage.getItem('userId') ?? ''
+
+export interface AuthState {
+    token : string | null;
+    userId : string | null;
+    userType : string | null;
+}
+
+const {productService} = createService(pinia);
+
+export const useAuthStore = defineStore({
+    id: 'auth', //identifier
+    state: () : AuthState => ({
+        token: null,
+        userId: null,
+        userType: null
     }),
 
-    actions : {
-        setUserId(value: string){
-            this.userId = value;
-            localStorage.setItem('userId', value);
+    actions: {
+        login(token:string){
+            this.token = token;
+
+            const decodedId = JSON.parse(atob(token.split('.')[1]))._id;
+            const decodedType = JSON.parse(atob(token.split('.')[1])).type;
+
+            this.userId = decodedId;
+            this.userType = decodedType; 
+            
+            this.saveState();
+        },
+
+        logout() {
+            this.token = null;
+            this.userId = null;
+            this.userType = null;
+
+            localStorage.removeItem('authStore');
+        },
+
+        saveState() {
+            localStorage.setItem('authStore', JSON.stringify(this.$state))
+        },
+
+        loadState(){
+            const storedState = localStorage.getItem('authStore');
+            if(storedState){
+                this.$patch(JSON.parse(storedState));
+            }
         }
     }
-    
 })
+
+// const token : string | null = localStorage.getItem('token');
+// const userType = ref(token ? JSON.parse(atob(token.split('.')[1])).type : null);
+// export const useUserId = defineStore('userId', {
+//     state: () => ({
+//         userId: localStorage.getItem('userId') ?? ''
+//     }),
+
+//     actions : {
+//         setUserId(value: string){
+//             this.userId = value;
+//             localStorage.setItem('userId', value);
+//         }
+//     }
+    
+// })
 
 export const useProductData = defineStore('product',{
     
@@ -37,11 +89,11 @@ export const useProductData = defineStore('product',{
     }
 })
 
-const userId = localStorage.getItem('userId');
+// const userId = localStorage.getItem('userId');
 
-// interface ProductState {
-//     productData: ProductData[]; // Define the type for productData
-// }
+interface ProductState {
+    productData: ProductData[]; // Define the type for productData
+}
 
 // export const useProductList = defineStore('productData', {
 //     state: () : ProductState => ({
@@ -75,6 +127,7 @@ export const useProductList =defineStore('productData', {
     }),
 
     actions: {
+        
         async loadProductData() {
             try {
                 const cachedProductData = localStorage.getItem("productData");
@@ -91,17 +144,14 @@ export const useProductList =defineStore('productData', {
 
         async fetchProduct() {
             try {
-                let data;
-
-                if(userType.value === 'SUPERADMIN' || userType.value === 'BUYER'){
-                    data = await productService();
-                } else if (userType.value === 'SELLER') {
-                    data = await userProductService(userId);
-                  }
+               
+                const data = await productService();
+                console.log(data);
 
                   if(data){
                     this.productData = data;
                     localStorage.setItem('productData', JSON.stringify(data));
+                    
                   }
             } catch (error) {
                 console.error('Error fetching product data:', error);
