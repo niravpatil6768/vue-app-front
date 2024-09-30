@@ -16,7 +16,6 @@ export interface SignupForm {
 }
 
 export interface ProductData {
-  length: boolean
   _id: string,
   name: string,
   price: string,

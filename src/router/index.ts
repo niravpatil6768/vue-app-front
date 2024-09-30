@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/dashboard',
     name: 'DashboardPage',
     component: DashboardPage,
-    meta: { requiresAuth: true}
+    // meta: { requiresAuth: true}
   },
   {
     path: '/view/:id',

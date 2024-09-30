@@ -60,10 +60,12 @@
     import { useForm } from 'vee-validate';
 import { signupSchema } from '@/schemas/signupSchema';
 import {useToast} from 'vue-toastification';
-import { signupService } from '@/service';
+import { createService } from '@/service';
+import { pinia } from '@/main';
 import { SignupForm } from '@/types/ItemTypes';
 
     
+const {signupService} = createService(pinia);
     const router = useRouter();
     const toast = useToast();
     
@@ -74,8 +76,9 @@ import { SignupForm } from '@/types/ItemTypes';
     });
     
     const onSubmit = handleSubmit( async (values) => {
+      errorMessage.value = '';
       try {
-        errorMessage.value = '';
+        console.log("data");
         const data = await signupService(values as SignupForm);
         toast.success("You are Signup successfully!", {
     timeout: 3000, // Duration

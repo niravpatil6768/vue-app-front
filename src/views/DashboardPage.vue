@@ -57,18 +57,20 @@
 </template>
 
 <script setup lang="ts">
-import { deleteProductService, getSingleProductService, productService, userProductService } from "@/service";
 import { ProductData } from "@/types/ItemTypes";
 import { ref, onMounted } from "vue";
 import DeleteButton from '@/components/DeleteButton.vue';
 import NavBar from "./NavBar.vue";
-import { useUserId, useProductData, useProductList} from "@/stores/Store";
+import { createService } from '@/service';
+import { pinia } from '@/main';
+import { useProductData, useProductList} from "@/stores/Store";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
+const { deleteProductService, getSingleProductService, productService, userProductService } = createService(pinia);
 const Products = ref<ProductData[]>([]);
-  const storeId = useUserId();
-  const userId = storeId.userId;
+  // const storeId = useUserId();
+  // const userId = storeId.userId;
   const router = useRouter();
   const token : string | null = localStorage.getItem('token');
   const userType = ref(token ? JSON.parse(atob(token.split('.')[1])).type : null);
@@ -77,21 +79,21 @@ const Products = ref<ProductData[]>([]);
   const toast = useToast();
 
 
-const fetchProducts = async () => {
-  try {
+// const fetchProducts = async () => {
+//   try {
     
-    if(userType.value === "SUPERADMIN" || userType.value === "BUYER"){
-      const data = await productService();
-      Products.value = data
-    } else if(userType.value === "SELLER" ){
-      const data = await userProductService(userId);
-      Products.value = data
-    }
-    console.log(Products.value);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-  }
-};
+//     if(userType.value === "SUPERADMIN" || userType.value === "BUYER"){
+//       const data = await productService();
+//       Products.value = data
+//     } else if(userType.value === "SELLER" ){
+//       const data = await userProductService(userId);
+//       Products.value = data
+//     }
+//     console.log(Products.value);
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//   }
+// };
 
 onMounted(async () => {
     await productStore.fetchProduct();

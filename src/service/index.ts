@@ -5,7 +5,7 @@ import { Pinia } from 'pinia';
 import { ref } from 'vue';
 
 
-const BASE_API = "http://localhost:3000"
+const BASE_API = 'http://localhost:3000'
 
 export const createService = (pinia: Pinia) => {
     
@@ -24,7 +24,7 @@ export const createService = (pinia: Pinia) => {
     
     }
     
-    const signupService = async (FormData : SignupForm) => {
+const signupService = async (FormData : SignupForm) => {
         try{
             const res = await axios.post(`${BASE_API}/user/signup`, FormData)
             return res.data;
@@ -43,7 +43,7 @@ export const createService = (pinia: Pinia) => {
                 Authorization: `Bearer ${token}`
             }
            });
-           return res.data.products;
+           return res;
         }
         else {
             console.log("seller");

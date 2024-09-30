@@ -3,6 +3,7 @@ import { ProductData } from '@/types/ItemTypes';
 import {defineStore} from 'pinia';
 import { pinia } from '@/main'; 
 import { ref } from 'vue';
+import { IProduct, useProduct } from '@/composables/use-product';
 
 
 export interface AuthState {
@@ -10,8 +11,6 @@ export interface AuthState {
     userId : string | null;
     userType : string | null;
 }
-
-const {productService} = createService(pinia);
 
 export const useAuthStore = defineStore({
     id: 'auth', //identifier
@@ -92,7 +91,7 @@ export const useProductData = defineStore('product',{
 // const userId = localStorage.getItem('userId');
 
 interface ProductState {
-    productData: ProductData[]; // Define the type for productData
+    productData: IProduct[]; // Define the type for productData
 }
 
 // export const useProductList = defineStore('productData', {
@@ -143,13 +142,12 @@ export const useProductList =defineStore('productData', {
         },
 
         async fetchProduct() {
-            try {
-               
-                const data = await productService();
+            try {               
+                const data = await useProduct();
                 console.log(data);
 
                   if(data){
-                    this.productData = data;
+                    this.productData = data.products as IProduct[];
                     localStorage.setItem('productData', JSON.stringify(data));
                     
                   }

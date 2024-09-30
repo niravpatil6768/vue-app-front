@@ -72,8 +72,9 @@ const onSubmit = handleSubmit( async (values) => {
     errorMessage.value = '';
     const data = await LoginService(values as LoginForm);
     if (data.token) {
-     authStore.login(data.token);
-      router.push("/dashboard");
+      router.push('/dashboard');
+      authStore.login(data.token);
+      console.log(data.token);
         }
           
         } catch(error){

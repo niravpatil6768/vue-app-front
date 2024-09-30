@@ -121,7 +121,7 @@ const submitForm = handleSubmit(async (values: ProductForm) => {
     if( Product && Object.keys(Product).length){
       console.log(values)
       const res = await updateProductService(values, Product._id);
-      console.log(res);
+      console.log("res:"+res);
       if (res.status === 200) {
         router.push("/dashboard");
       }
